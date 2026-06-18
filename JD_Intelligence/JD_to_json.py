@@ -1,13 +1,14 @@
 import os
 import json
+from dotenv import load_dotenv
 from typing import List
 from pydantic import BaseModel, Field
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 
 #Gemini API Key
-
-os.environ["GOOGLE_API_KEY"] = "GOOGLE_API_KEY"
+load_dotenv()
+os.environ["GOOGLE_API_KEY"] = os.getenv("GEMINI_API_KEY")
 
 # additional metric to get better results in knowledge graph
 class RoleWeights(BaseModel):
