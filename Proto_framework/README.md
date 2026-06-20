@@ -1,5 +1,5 @@
 # Intitial Architecture Design
-![System Architecture](Assets/intital_framework.png)
+![System Architecture](Assets/initial_framework.png)
 
 Initial Framework finalised : 
 * Consists of 3 stage filtering
