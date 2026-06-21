@@ -1,4 +1,5 @@
 import os
+from JD_sorting import M_query
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 

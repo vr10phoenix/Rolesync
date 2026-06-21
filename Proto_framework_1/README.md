@@ -1,9 +1,10 @@
 ## Updated Architecture : 
-build upon existing framework as developed , capable of identifing Behavioural , Career aspects along with the search
+build upon existing framework as developed , capable of identifing Behavioural , Career aspects along with the search. 
+
 
 ## Results 
-environment : Google Colab Notebook 
-GPU : T4 GPU
+Environment : Google Colab Notebook  
+GPU : T4 GPU  
 
 ### Query : 
  About Us: We are a fast-growing tech startup in IT Services looking to disrupt the industry. 
@@ -49,8 +50,7 @@ Recruiter Justification:
 Despite being slightly under the 4-year total experience threshold, this candidate's profile strongly aligns with the role's emphasis on Machine Learning interest and data pipeline expertise. They possess advanced proficiency in Machine Learning, Fine-tuning LLMs, and Reinforcement Learning, alongside significant experience in building streaming data pipelines. Their explicit desire to transition into more ML-focused work demonstrates the desired growth trajectory.
 
 ### Conclusion : 
-Improved results and reasoning
+WOorking protoype with devised architecture with Improved results and reasoning. 
 
-
-## Detailed Documentation : 
-Detailed documentation cmoing shortly
+### Further Developments
+Polisfing the entire framework to analyse deeper aspects to see the compatablility of candiates with the job as provided in ```GIVEN/job_description.docx```.  

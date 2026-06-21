@@ -1,4 +1,5 @@
 import os
+from JD_sorting import M_query
 from search_database import search_candidates_faiss
 from cross_encoder import cross_encoder_rerank
 from LLM_analysis import llm_deep_analysis
