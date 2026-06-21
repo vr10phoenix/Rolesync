@@ -1,5 +1,5 @@
 # Intitial Architecture Design
-![System Architecture](Assets/initial_framework.png)
+![System Architecture](https://github.com/vr10phoenix/Rolesync/blob/main/Assets/initial_framework.png)
 
 Initial Framework finalised : 
 * Consists of 3 stage filtering
