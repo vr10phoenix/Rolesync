@@ -1,7 +1,7 @@
 ## Updated Architecture : 
 build upon existing framework as developed , capable of identifing Behavioural , Career aspects along with the search. 
 
-![system_architecture](Assets/arch_1.png)
+![system_architecture](https://github.com/vr10phoenix/Rolesync/blob/main/Assets/arch_1.png)
 
 ## Components
 
