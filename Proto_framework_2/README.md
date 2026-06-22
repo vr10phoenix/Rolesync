@@ -6,19 +6,18 @@
 - exposes behavioral signals, surfaces hidden alignment vectors for bi-encoders and cross-encoders about deceptive profiles. 
 
 #### Core Logic  
-- The Title Mismatch & Non-Tech Trap 
- - The builder intercepts the current_title field. If it contains non-technical departments, gives a critical warning string (CURRENT REALITY WARNING) ensuring the vector distance increases.
+##### The Title Mismatch & Non-Tech Trap 
+ The builder intercepts the current_title field. If it contains non-technical departments, gives a critical warning string (CURRENT REALITY WARNING) ensuring the vector distance increases.
 
-- The Ghost Profile Trap
- - last_active_date and recruiter_response_rate. Inactivity exceeding 180 days or response rates below 10% append a strict WARNING: Candidate is a 'Ghost Profile' string directly to the text payload.
+##### The Ghost Profile Trap
+ last_active_date and recruiter_response_rate. Inactivity exceeding 180 days or response rates below 10% append a strict WARNING: Candidate is a 'Ghost Profile' string directly to the text payload.
 
-- The Framework Enthusiast vs. Foundational Trap
- - Separates skills into Core Engineering Foundation and Recent AI Frameworks. If a candidate lists modern frameworks but does not possess at least 24 months of core foundational engineering experience (Python, SQL, Backend, etc.), a dedicated flag is appended to penalize downstream vector similarity scores.
-- The Job-Hopper & Architecture Chaser Trap
- - Calculates moving averages of employment durations (flagging tenures under 18 months). It also sweeps the most recent role descriptions for explicit verbs (built, shipped, coded, implemented) if the candidate holds an executive title.
-
-- Exposing Hidden Match Signals
- - Automatically scans narrative experience bodies for deep-indexing keywords and injects a prominent string: HIDDEN MATCH SIGNAL: Career history explicitly shows building ranking, search, or recommendation systems at scale.
+##### The Framework Enthusiast vs. Foundational Trap
+ Separates skills into Core Engineering Foundation and Recent AI Frameworks. If a candidate lists modern frameworks but does not possess at least 24 months of core foundational engineering experience (Python, SQL, Backend, etc.), a dedicated flag is appended to penalize downstream vector similarity scores.
+##### The Job-Hopper & Architecture Chaser Trap
+ Calculates moving averages of employment durations (flagging tenures under 18 months). It also sweeps the most recent role descriptions for explicit verbs (built, shipped, coded, implemented) if the candidate holds an executive title.
+##### Exposing Hidden Match Signals
+Automatically scans narrative experience bodies for deep-indexing keywords and injects a prominent string: HIDDEN MATCH SIGNAL: Career history explicitly shows building ranking, search, or recommendation systems at scale.
 
 ### Architecture Flow 
 ```
@@ -96,6 +95,7 @@ if __name__ == "__main__":
 ````
 
 #### Output expectation
+```
 [STAGE 1] Initializing Local Embeddings Registry...
 [STAGE 1] Loading local FAISS database footprint...
 [STAGE 1] Database successfully verified and bound with deserialization permission.
@@ -106,7 +106,7 @@ Match 2: C_10432
 Match 3: C_43012
 Match 4: C_88321
 Match 5: C_00294
-
+```
 
 
 
@@ -121,17 +121,19 @@ Match 5: C_00294
 It feeds the coarse candidates from the FAISS database into an Cross-Encoder network (```BAAI/bge-reranker-base```). By processing the refined query and the candidate’s rich synthetic document simultaneously, the model captures deep, non-linear contextual interactions and semantic alignments that standard vector search misses entirely.
 
 #### Logit-to-Probability Transformation (Sigmoid Math)
-Raw logits from Cross-Encoders are unbounded, frequently presenting as negative integers or numbers greater than 1.0 depending on the model's structural design. To establish a standardized score suitable for ATS tracking platforms, the code runs each raw output through a Sigmoid Activation Function:
- $$\text{Normalized Score} = \frac{1}{1 + e^{-\text{logit}}}$$ 
+Raw logits from Cross-Encoders are unbounded, frequently presenting as negative integers or numbers greater than 1.0 depending on the model's structural design. To establish a standardized score suitable for ATS tracking platforms, the code runs each raw output through a Sigmoid Activation Function:  
+
+ $$\text{Normalized Score} = \frac{1}{1 + e^{-\text{logit}}}$$  
+
  This maps the abstract alignment value into a uniform, human-readable range between ```0.0``` (pure mismatch) and ```1.0``` (pure match).
 
 #### Dynamic Reasoning Engine
 Instead of outputting  raw math floats, the script dynamically unpacks structured LangChain document metadata to construct real-time humanized profile summaries (dynamic_reasoning) explicitly tracking:
 
 - Candidate Title
-- Absolute Years of Experience (years_of_experience)
-- Quantifiable core skills density counts (ai_core_skills)
-- Real-time behavioral interaction metric bounds (response_rate)
+- Absolute Years of Experience (```years_of_experience```)
+- Quantifiable core skills density counts (```ai_core_skills```)
+- Real-time behavioral interaction metric bounds (```response_rate```)
 
 #### component workflow 
 ```
