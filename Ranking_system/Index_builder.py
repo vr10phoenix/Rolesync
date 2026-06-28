@@ -1,13 +1,14 @@
+from __future__ import annotations
 import argparse
 import json
 import os
 from datetime import date
-from __future__ import annotations
 import numpy as np
 from sentence_transformers import SentenceTransformer
 import faiss
 from document_builder import load_candidates, build_candidate_document
 from constraints import evaluate_candidate
+from Proto_framework_1.JD_sorting import M_query
 
 DEFAULT_MODEL = "BAAI/bge-base-en-v1.5"
 QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages: "

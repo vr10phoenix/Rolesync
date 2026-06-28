@@ -1,3 +1,4 @@
+from __future__ import annotations
 import os
 import argparse
 import json
@@ -5,7 +6,6 @@ import faiss
 from dataclasses import dataclass, field
 from typing import Any
 import numpy as np
-from __future__ import annotations
 from Index_builder import embed_texts, _load_embedding_model, DEFAULT_MODEL
 from Proto_framework_1.JD_sorting import M_query
 
