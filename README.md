@@ -6,7 +6,7 @@
 
 ---
 
-# Motivation
+### Motivation
 
 Modern recruitment systems still rely heavily on keyword overlap.
 
@@ -22,58 +22,52 @@ Instead of treating recruitment as a keyword search problem, we treat it as a **
 
 ---
 
-# 🏗️ System Architecture
+## System Architecture
 
 ```
-                         Candidate JSON Profiles
-                                   │
-                                   ▼
-                    ┌──────────────────────────┐
-                    │ Intelligent Document     │
-                    │ Builder                  │
-                    └──────────────────────────┘
-                                   │
-                                   ▼
-                    ┌──────────────────────────┐
-                    │ Constraint Engine        │
-                    │ Rule-Based Evaluation    │
-                    └──────────────────────────┘
-                                   │
-                                   ▼
-                    ┌──────────────────────────┐
-                    │ Dense Vector Index       │
-                    │ (FAISS + BGE Embeddings) │
-                    └──────────────────────────┘
-                                   │
-                      Recruiter Job Description
-                                   │
-                                   ▼
-                    ┌──────────────────────────┐
-                    │ Bi-Encoder Retrieval     │
-                    │ Fast Candidate Recall    │
-                    └──────────────────────────┘
-                                   │
-                          Top-K Candidate Pool
-                                   │
-                                   ▼
-                    ┌──────────────────────────┐
-                    │ Cross Encoder            │
-                    │ Deep Re-ranking          │
-                    └──────────────────────────┘
-                                   │
-                                   ▼
-                    Final Ranked Candidate List
+Candidate JSON Profiles
+           │
+           ▼
+  Intelligent Document Builder
+           │
+           ▼
+     Constraint Engine
+     Rule Based Evaluation
+           │
+           ▼
+   Dense Vector Index
+   (FAISS + BGE Embeddings)
+           │
+  Recruiter Job Description
+           │
+           ▼
+   Bi-Encoder Retrieval
+   Fast Candidate Recall
+           │
+   Top-K Candidate Pool
+           │
+           ▼
+     Cross Encoder
+     Deep Re-ranking
+           │
+           ▼
+ Final Ranked Candidate List
+
 ```
 
 ---
 
-#  Pipeline Overview
+##  Pipeline Components
 
-This project follows a **five-stage retrieval pipeline** where every stage progressively improves candidate quality.
+This project follows a **Two stage Retrival mechaninsm** :   
+- Bi-encoder Retrival
+- Cross encoder Rereanking
+
+The pipeline was designed with these features to gurantee simple yet powerful and ultra - fast filtering and reranking even without use of LLMs.
 
 ---
 
-# Stage 1 — Intelligent Document Builder
+### Intelligent Document Builder
 
 Raw JSON profiles are poor retrieval documents.
 
@@ -94,7 +88,7 @@ This dramatically improves semantic retrieval quality.
 
 ---
 
-# Stage 2 — Constraint Engine
+### Constraint Engine
 
 Before retrieval, every candidate passes through a deterministic reasoning engine.
 
@@ -107,30 +101,22 @@ Unlike LLMs, these rules are:
 The engine automatically detects patterns such as:
 
 - Consulting-only career history
-
 - Research-only profiles
-
 - Prompt-engineering without production ML
-
 - Job hopping
-
 - Senior titles without coding evidence
-
 - Relocation & visa constraints
 
 Every decision produces recruiter-readable explanations instead of black-box scores.
 
 ---
 
-# Stage 3 — Vector Index Construction
-
+### Vector Index Construction
 Each enriched document is embedded using
-
-> ```**BAAI/bge-base-en-v1.5**```
-
+ ```BAAI/bge-base-en-v1.5```
 The embeddings are stored inside a FAISS Inner Product index.
 
-During indexing the system also stores
+During indexing the system stores
 
 * Candidate metadata
 * Constraint results
@@ -141,7 +127,7 @@ This enables semantic retrieval without repeatedly evaluating business logic.
 
 ---
 
-# Stage 4 — Bi-Encoder Retrieval
+### Bi-Encoder Retrieval
 
 Given a recruiter Job Description,
 
@@ -158,7 +144,7 @@ This allows the system to retrieve candidates that are not only semantically sim
 
 ---
 
-# Stage 5 — Cross Encoder Re-ranking
+### Cross Encoder Re-ranking
 
 The Bi-Encoder optimizes **speed**.
 The Cross Encoder optimizes **accuracy**.
@@ -174,21 +160,21 @@ This stage significantly improves ranking precision.
 
 ---
 
-# Key Features
+### Key Features
 
-### Intelligent Candidate Understanding
+#### Intelligent Candidate Understanding
 
 Converts structured profiles into semantically rich documents.
 
 ---
 
-### Explainable Constraint Filtering
+#### Explainable Constraint Filtering
 
 Every rejection includes human-readable reasoning.
 
 ---
 
-### Hybrid Ranking
+#### Hybrid Ranking
 
 Combines
 
@@ -200,13 +186,13 @@ into one unified score.
 
 ---
 
-### Enterprise Retrieval Pipeline
+#### Enterprise Retrieval Pipeline
 
 Inspired by production Retrieval-Augmented Search systems.
 
 ---
 
-### Modular Design
+#### Modular Design
 
 Every stage is completely independent.
 
@@ -234,7 +220,7 @@ Each module can be improved independently.
 
 ---
 
-#  Project Structure
+## Project Structure
 
 ```
 project/
@@ -261,24 +247,24 @@ project/
 
 | Component     | Technology                   |
 | ------------- | ---------------------------- |
-| Embeddings    | BAAI BGE Base                |
+| Embeddings    | ```BAAI/bge-base-en-v1.5```               |
 | Vector Search | FAISS                        |
-| Re-ranking    | BGE Cross Encoder            |
+| Re-ranking    | ```BAAI/bge-reranker-base\large```|
 | Language      | Python                       |
 | Retrieval     | Sentence Transformers        |
 | Ranking       | Hybrid Semantic + Rule Based |
 
 ---
 
-# 🚀 Running the Pipeline
+## Running the Pipeline
 
-## 1. Build Candidate Documents
+### Build Candidate Documents
 
 ```bash
 python document_builder.py
 ```
 ---
-## 2. Evaluate Constraints & Build Index
+### Evaluate Constraints & Build Index
 
 ```bash
 python Index_builder.py
@@ -297,7 +283,7 @@ Configuration
 
 ---
 
-## 3. Retrieve Candidates
+### Retrieve Candidates
 ```bash
 python retrival.py
 ```
@@ -305,7 +291,7 @@ Outputs the highest scoring semantic matches.
 
 ---
 
-## 4. Re-rank Results
+### Re-rank Results
 
 ```bash
 python cross_encoder_reranking.py
@@ -315,8 +301,8 @@ Exports the final ranked shortlist.
 
 ---
 
-# Results : 
-## Cross encoder : ```BAAI/bge-reranker-base```
+## Results : 
+### Cross encoder : ```BAAI/bge-reranker-base```
 ```
 search completed in ```1.088270664215088``` seconds  
 Loading Cross-Encoder Model: 'BAAI/bge-reranker-base'...  
@@ -338,7 +324,7 @@ Rank #11  | ID: CAND_0039754 | Name: Mira Banerjee        | Score: 0.5718
 Rank #12  | ID: CAND_0094759 | Name: Aditya Pillai
 ....
 ```
-## Cross encoder : ```BAAI/bge-reranker-large```
+### Cross encoder : ```BAAI/bge-reranker-large```
 ```
 search completed in 0.9966781139373779 seconds  
 Loading Cross-Encoder Model: 'BAAI/bge-reranker-large'...  
@@ -364,7 +350,7 @@ Rank #14  | ID: CAND_0092278 | Name: Ananya Arora
 ```
 
 
-#  Why Multi-Stage Retrieval?
+###  Why Multi-Stage Retrieval?
 
 Each model specializes in a different task.
 
@@ -382,12 +368,16 @@ This improves:
 
 * Retrieval accuracy
 * Explainability
-* Scalability
-* Recruiter trust
+* Speed 
 
 ---
 
-#  Future Improvements
+### Dropping LLMs for Analysis
+This was done as the output required is top 100 candidates and applying LLM analysis significantly loses the perfrmance in terms of speed.  
+Cases where speed is not a vital parameter can be implemented by extending the components by adding a LLM analysis module.   
+Considering constraints of not using GPU while fetching candidates and Hard ceiling of 300  seconds as provided by Redrob the current Architecture and mechanism seemed mathematically stable and powerful coming with a very high speed retrrival.
+
+##  Future Improvements
 
 * Hybrid BM25 + Dense Retrieval
 * Learning-to-Rank (LTR)
@@ -401,7 +391,7 @@ This improves:
 
 ---
 
-# 🏆 Design Philosophy
+## Design Philosophy
 
 This project follows the same philosophy adopted in modern search systems:
 
@@ -409,4 +399,23 @@ This project follows the same philosophy adopted in modern search systems:
 
 Rather than replacing recruiter judgment, the system amplifies it by combining semantic understanding, deterministic business rules, and neural ranking into one explainable pipeline.
 
-The result is a retrieval engine that is **fast, simple ,scalable, interpretable, and production-ready**.
+### what makes it differnet ?
+#### Python logic
+ used Python logic to read the JSON, find traps (job hoppers, pure consulting, low response rate), and wrote them into the document as text warnings.  
+ **why different** : Using an LLM to figure out if someone is a job hopper takes 2 seconds and $0.01 per candidate. Using Python if/else logic takes 0.0001 seconds and $0.00. You dynamically translated structured database metrics (which semantic search normally ignores) into latent semantic text signals that the Cross-Encoder could actually "read."
+
+#### True Two-Stage Retrieval
+What you did: 0.9 seconds for FAISS (Bi-encoder), 199 seconds for Re-ranking (Cross-encoder).  
+**why differnet** : 
+- Stage 1 (FAISS): Casts a wide net. It calculates cosine similarity instantly (0.9s) but doesn't understand deep context.
+
+- Stage 2 (Cross-Encoder): Highly computationally expensive. It reads the Query and the Document at the same time and performs self-attention between the words. It is incredibly accurate.
+
+Finishing a 100-candidate Cross-Encoder evaluation on a purely local machine in 199 seconds without a GPU.
+
+#### Asymmetric Penalty scoring
+injecting warnings like "WARNING: Candidate is a 'Ghost Profile'" and "CURRENT REALITY WARNING"  
+
+**Why differnet** : By putting those specific words into the text, you essentially "poisoned" the bad candidates mathematically. When the Cross-Encoder compared the Job Description against a profile containing the word "WARNING", it automatically drove the candidate's logit score down , Successfully bypassed the need for an LLM to act as a judge by forcing the embedding math to do the judging.
+
+The result is a retrieval engine that is **fast, simple , Powerful ,scalable, interpretable, and production-ready**.
