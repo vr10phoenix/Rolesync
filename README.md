@@ -1,6 +1,5 @@
-# Jobsync : An Intelligent Multi-Stage Candidate Retrieval & Ranking Engine
+# RoleSync : An Intelligent Multi-Stage Candidate Retrieval & Ranking Engine
 
-> **Beyond keyword matching. Beyond embeddings.**
 >
 > A production-inspired, multi-stage retrieval architecture that understands candidate profiles, filters unsuitable applicants through deterministic reasoning, retrieves semantically relevant candidates using dense vector search, and finally performs deep relevance re-ranking using a Cross Encoder.
 
@@ -24,6 +23,9 @@ Instead of treating recruitment as a keyword search problem, we treat it as a **
 
 ## System Architecture
 
+![System Architecture](https://github.com/vr10phoenix/Rolesync/blob/main/Assets/system_architecture.png)
+
+### Workflow
 ```
 Candidate JSON Profiles
            │
@@ -54,7 +56,9 @@ Candidate JSON Profiles
  Final Ranked Candidate List
 
 ```
-
+---
+### Index Building Work-flow
+![Index Building Woekflow](https://github.com/vr10phoenix/Rolesync/blob/main/Assets/index_architecture.png)
 ---
 
 ##  Pipeline Components
@@ -225,13 +229,18 @@ Each module can be improved independently.
 ```
 project/
 
-│
+├── download_candidates.py
 ├── document_builder.py
 ├── constraints.py
 ├── Index_builder.py
-├── retrival.py
+├── retriever.py
 ├── cross_encoder_reranking.py
-│
+├── main.py
+|
+├── models/
+│    ├── BAAI/bge-reranker-base
+│    ├── BAAI/bge-base-en-v1.5
+|
 ├── candidates.jsonl
 ├── index_database/
 │   ├── candidates.faiss
@@ -256,75 +265,146 @@ project/
 
 ---
 
+## Use cases 
+Command‑line Arguments
+| Argument        | Type | Default                     | Description                                      |
+|-----------------|------|-----------------------------|--------------------------------------------------|
+| --candidates    | str  | required                    | Path to the candidate JSONL file.                |
+| --out           | str  | required                    | Output CSV file path.                            |
+| --query         | str  | (predefined JD)             | Job description query text.                      |
+| --index-dir     | str  | index_database              | Directory to store/read the FAISS index.         |
+| --download-index| str  | None                        | Google Drive link or file ID to download a pre‑built index ZIP. |
+| --model         | str  | BAAI/bge-base-en-v1.5       | Bi‑encoder model name.                           |
+| --cross-model   | str  | BAAI/bge-reranker-base      | Cross‑encoder model.                             |
+| --batch-size  | int  | 32      | Batch size for embedding generation.                          |
+| --recall-k    | int  | 200     | Number of candidates retrieved by the bi‑encoder (pool for reranking). |
+| --top-k       | int  | 100     | Number of final candidates to output after reranking.         |
+| --alpha       | float| 0.5     | Blend weight: α * similarity + (1‑α) * soft_score.            |
+| --rebuild     | flag | False   | Force rebuild of the index, even if it already exists.        |
+
 ## Running the Pipeline
-
-### Build Candidate Documents
-
-```bash
-python document_builder.py
+Install the dependencies : 
 ```
----
-### Evaluate Constraints & Build Index
-
-```bash
-python Index_builder.py
-```
-This generates
-
-```
-FAISS Index
-
-Metadata
-
-Constraint Scores
-
-Configuration
+# install dependencies
+pip install -r requirements.txt
 ```
 
----
-
-### Retrieve Candidates
-```bash
-python retrival.py
+Download the dataset:
 ```
-Outputs the highest scoring semantic matches.
-
----
-
-### Re-rank Results
-
-```bash
-python cross_encoder_reranking.py
+python download_candidates.py
 ```
 
-Exports the final ranked shortlist.
+Once the dataset is downloaded -> 2 ways : 
+FIRST >
+```
+# Downloads Pre-computed Candidate database , ready to use index to test it without
+# making one which takes long to construct -> (RECOMMENDED APPROACH)
+python -u main.py --candidates ./candidates.jsonl --out submission.csv --download-index "https://drive.google.com/uc?export=download&id=1zpIrxjRwCNYw0Eo4CpCUcmqTWFXylzYU"
+```
+Use this command to run the Ranking system with a ready to use index , test it staright away
+
+SECOND > 
+(NOT RECOMMENDED) build Index from scratch and run the ranking , only when you want to explicity construct the index which is not needed , ready-to-use index already is the result of this command
+```
+# If explicitly need to build another index
+python -u main.py --candidates ./candidates.jsonl --out submission.csv --download-index "https://drive.google.com/uc?export=download&id=1zpIrxjRwCNYw0Eo4CpCUcmqTWFXylzYU"
+```
+
+That's it !! 
+
+**NOTE** : **The pipeline uses Internet on the first run to Download the Dataset , ranking and retrival models and Pre-built Candidate database.**
+**The Ranking systems starts just after this and during the whole ranking process there are no external API calls , strictly tested and Verified.**
+**After first run onwards , the entire system will run without making any API calls or simple without connecting to Internet.**
 
 ---
 
 ## Results : 
 ### Cross encoder : ```BAAI/bge-reranker-base```
 ```
-search completed in ```1.088270664215088``` seconds  
-Loading Cross-Encoder Model: 'BAAI/bge-reranker-base'...  
-Running Cross-Encoder prediction...  
-completed in 199.18889999389648 seconds  
+[MAIN] Starting pipeline...
+[MAIN] Ensuring models are downloaded locally...
+modules.json: 100%|██████████████████████████████████████████████████████████████████████████████| 349/349 [00:00<?, ?B/s]
+config_sentence_transformers.json: 100%|█████████████████████████████████████████████████████████| 124/124 [00:00<?, ?B/s]
+README.md: 100%|█████████████████████████████████████████████████████████████████████| 94.6k/94.6k [00:00<00:00, 50.7MB/s]
+sentence_bert_config.json: 100%|███████████████████████████████████████████████████████████████| 52.0/52.0 [00:00<?, ?B/s]
+config.json: 100%|███████████████████████████████████████████████████████████████████████████████| 777/777 [00:00<?, ?B/s]
+model.safetensors: 100%|███████████████████████████████████████████████████████████████| 438M/438M [00:48<00:00, 9.00MB/s]
+Loading weights: 100%|████████████████████████████████████████████████████████████████| 199/199 [00:00<00:00, 1776.57it/s]
+tokenizer_config.json: 100%|██████████████████████████████████████████████████████████████| 366/366 [00:00<00:00, 358kB/s]
+vocab.txt: 100%|███████████████████████████████████████████████████████████████████████| 232k/232k [00:00<00:00, 3.20MB/s]
+tokenizer.json: 100%|██████████████████████████████████████████████████████████████████| 711k/711k [00:00<00:00, 7.80MB/s]
+special_tokens_map.json: 100%|████████████████████████████████████████████████████████████| 125/125 [00:00<00:00, 125kB/s]
+config.json: 100%|███████████████████████████████████████████████████████████████████████████████| 190/190 [00:00<?, ?B/s]
+[MAIN] Bi-encoder model is available.
+config.json: 100%|███████████████████████████████████████████████████████████████████████████████| 799/799 [00:00<?, ?B/s]
+model.safetensors: 100%|█████████████████████████████████████████████████████████████| 1.11G/1.11G [03:01<00:00, 6.14MB/s]
+Loading weights: 100%|████████████████████████████████████████████████████████████████| 201/201 [00:00<00:00, 3772.09it/s]
+tokenizer_config.json: 100%|██████████████████████████████████████████████████████████████| 443/443 [00:00<00:00, 445kB/s]
+sentencepiece.bpe.model: 100%|███████████████████████████████████████████████████████| 5.07M/5.07M [00:03<00:00, 1.49MB/s]
+tokenizer.json: 100%|████████████████████████████████████████████████████████████████| 17.1M/17.1M [00:03<00:00, 5.25MB/s]
+special_tokens_map.json: 100%|████████████████████████████████████████████████████████████| 279/279 [00:00<00:00, 279kB/s]
+[MAIN] Cross-encoder model is available.
+[MAIN] All models are ready.
 
---- TOP 100 SHORTLISTED CANDIDATES ---  
-Rank #1   | ID: CAND_0060072 | Name: Anil Mishra          | Score: 0.6691
-Rank #2   | ID: CAND_0002025 | Name: Ira Dalal            | Score: 0.6388
-Rank #3   | ID: CAND_0071974 | Name: Sai Verma            | Score: 0.6352
-Rank #4   | ID: CAND_0006567 | Name: Aditya Subramanian   | Score: 0.6279
-Rank #5   | ID: CAND_0088025 | Name: Amit Arora           | Score: 0.6150
-Rank #6   | ID: CAND_0068351 | Name: Aadhya Iyer          | Score: 0.6073
-Rank #7   | ID: CAND_0092278 | Name: Ananya Arora         | Score: 0.6039
-Rank #8   | ID: CAND_0033861 | Name: Kabir Kapoor         | Score: 0.5971
-Rank #9   | ID: CAND_0005538 | Name: Aryan Goyal          | Score: 0.5821
-Rank #10  | ID: CAND_0081846 | Name: Arjun Khanna         | Score: 0.5795
-Rank #11  | ID: CAND_0039754 | Name: Mira Banerjee        | Score: 0.5718
-Rank #12  | ID: CAND_0094759 | Name: Aditya Pillai
-....
+[MAIN] Downloading index from Google Drive...
+Downloading...
+From (original): https://drive.google.com/uc?id=1zpIrxjRwCNYw0Eo4CpCUcmqTWFXylzYU
+From (redirected): https://drive.google.com/uc?id=1zpIrxjRwCNYw0Eo4CpCUcmqTWFXylzYU&confirm=t&uuid=215aad84-acb5-4367-8c67-1605ab333903
+To: C:\Users\P Vardhan Reddy\Projects\RedDrob\index_database_temp.zip
+100%|██████████████████████████████████████████████████████████████████████████████████| 349M/349M [01:05<00:00, 5.33MB/s]
+[MAIN] Index downloaded and extracted to index_database
+[MAIN] Using downloaded index at index_database
 ```
+**Ranking starts and whole system operates without Internet from here onwards**
+```
+[MAIN] Loading retriever from index_database ...
+Loading weights: 100%|████████████████████████████████████████████████████████████████| 199/199 [00:00<00:00, 1745.63it/s]
+[MAIN] Retrieving top 200 bi‑encoder candidates ...
+Batches: 100%|██████████████████████████████████████████████████████████████████████████████| 1/1 [00:01<00:00,  1.83s/it]
+[MAIN] Reranking with cross‑encoder and exporting to submission.csv ...
+
+[STAGE 2] Loading Cross-Encoder Model: 'BAAI/bge-reranker-base'...
+Loading weights: 100%|████████████████████████████████████████████████████████████████| 201/201 [00:00<00:00, 1531.94it/s]
+[STAGE 2] Running Cross-Encoder prediction...
+completed in 36.27 seconds
+
+
+[STAGE 2] --- TOP 100 SHORTLISTED CANDIDATES ---
+Rank #1   | ID: CAND_0060072 | Name: Anil Mishra          | Score: 1.0000
+Rank #2   | ID: CAND_0071974 | Name: Sai Verma            | Score: 0.8956
+Rank #3   | ID: CAND_0002025 | Name: Ira Dalal            | Score: 0.8944
+Rank #4   | ID: CAND_0006567 | Name: Aditya Subramanian   | Score: 0.8792
+Rank #5   | ID: CAND_0061257 | Name: Advaith Pillai       | Score: 0.7536
+Rank #6   | ID: CAND_0094759 | Name: Aditya Pillai        | Score: 0.7415
+Rank #7   | ID: CAND_0081846 | Name: Arjun Khanna         | Score: 0.7093
+Rank #8   | ID: CAND_0077337 | Name: Aarav Agarwal        | Score: 0.7056
+Rank #9   | ID: CAND_0068351 | Name: Aadhya Iyer          | Score: 0.6886
+Rank #10  | ID: CAND_0039754 | Name: Mira Banerjee        | Score: 0.6724
+Rank #11  | ID: CAND_0037980 | Name: Reyansh Chowdary     | Score: 0.6683
+Rank #12  | ID: CAND_0092278 | Name: Ananya Arora         | Score: 0.6564
+Rank #13  | ID: CAND_0086022 | Name: Dhruv Naidu          | Score: 0.6528
+Rank #14  | ID: CAND_0005538 | Name: Aryan Goyal          | Score: 0.6488
+Rank #15  | ID: CAND_0008425 | Name: Myra Krishnan        | Score: 0.6350
+Rank #16  | ID: CAND_0046064 | Name: Saanvi Naidu         | Score: 0.6273
+Rank #17  | ID: CAND_0080766 | Name: Kiara Mittal         | Score: 0.6252
+Rank #18  | ID: CAND_0007411 | Name: Rahul Bansal         | Score: 0.6216
+Rank #19  | ID: CAND_0093547 | Name: Arnav Ghosh          | Score: 0.6152
+Rank #20  | ID: CAND_0093193 | Name: Aarohi Bose          | Score: 0.6140
+......
+Rank #99  | ID: CAND_0050504 | Name: Rajesh Ghosh         | Score: 0.6000
+Rank #100 | ID: CAND_0087630 | Name: Aisha Rao            | Score: 0.6000
+----------------------------------------------------------------------
+
+[STAGE 2] Exporting Top 100 candidates to 'submission.csv' ...
+[STAGE 2] Success! Pipeline complete.
+```
+**OUTPUT** : A CSV containing list of candidates after reranking.
+
 ### Cross encoder : ```BAAI/bge-reranker-large```
+#### **(EXTRA : NOT FOR HACKATHON)**
+Was done during the development of system , yeilded better results but re-reanking time exceed limit : 300s (completed in 680.5 seconds)  
+bge-ranker-large can be used by making necessary changes in ```--cross-model```
+For even better results I shall recommend using this re-ranker 
 ```
 search completed in 0.9966781139373779 seconds  
 Loading Cross-Encoder Model: 'BAAI/bge-reranker-large'...  
