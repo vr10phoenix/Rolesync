@@ -1,0 +1,97 @@
+# ============================================================================
+# Team identity
+# ============================================================================
+team_name: "Guy_Solo"  # Used in leaderboard and announcements
+
+primary_contact:
+  name: "P Vardhan Reddy"
+  email: "2024ume0249@iitjammu.ac.in"   # Used for all organizer communication
+  phone: "+91-8792038110"        # Used for top-50 / top-10 outreach
+
+team_members:
+  - name: "P Vardhan Reddy"
+    email: "2024ume0249@iitjammu.ac.in"
+    role: "Team Lead"          # Optional, e.g. "Team Lead", "Backend", "Data"
+
+# ============================================================================
+# Code and reproducibility
+# ============================================================================
+github_repo: "https://github.com/vr10phoenix/Rolesync"
+# GitHub Repo
+
+sandbox_link: "https://colab.research.google.com/drive/1d8fE_CEVykByeg3uW7-pJ9Llc_Oh86c0?usp=sharing"
+# Demo run in Colab with sample_candidates.jsonl
+# platforms (HuggingFace Spaces, Streamlit Cloud, Replit, Colab, Docker, Binder).
+
+reproduce_command: "python -u main.py --candidates ./candidates.jsonl --out submission.csv --download-index "https://drive.google.com/uc?export=download&id=1zpIrxjRwCNYw0Eo4CpCUcmqTWFXylzYU""
+# Single command to produce the CSV files form candidates.jsonl , this command skips index building which requires GPU (yet takes 40 min (Nvidia T4))
+# , index building could be tested in sandbox link or explicitily using --rebuild argument in the current line  : 
+#  python main.py --candidates ./candidates.jsonl --out submission.csv --rebuild
+
+
+# ============================================================================
+# Compute environment
+# ============================================================================
+compute:
+  platform: "Dell Inspiron 14"                    # Or: "AWS EC2 c5.4xlarge", "Local Linux box", etc.
+  cpu_cores: 8                                  # Number of CPU cores used
+  ram_gb: 16                                    # Available RAM in GB
+  python_version: "3.11.4"                      # python --version
+  os: "windows 11"                              # Or "Ubuntu 22.04 LTS", etc.
+  uses_gpu_for_inference: false                 # Must be false — see compute constraints
+  has_network_during_ranking: false             # Must be false — no API calls during ranking
+  pre_computation_required: true               # true if you pre-compute embeddings or train models offline
+  pre_computation_time_minutes: "2-4 minutes max (Downloading models and index in first run)"               # Approximate, if applicable
+
+# ============================================================================
+# AI tools declaration
+# ============================================================================
+# Transparency only — declared use is NOT penalized. Be honest. Stage 5 interview
+# may verify these declarations against your code; declarations that contradict
+# your code or your interview are flagged.
+ai_tools_used:
+  - "Gemini"         # Code review , debuggings , refining to implement stable and structured code
+  - "ChatGPT"        # for architecture discussion and intial workflow mechanism
+
+ai_usage_summary: |
+  Briefly describe how AI tools were used. Examples:
+  - "Used GEMINI to correct bugs in the code , to structure the workflow , 
+     and sanity checks when applying and building individual code compoenents , 
+     code review and suggestions for overall stablility and clean easily repairable code.
+  -  Documentation of code in GitHub"
+  - "Used ChatGPT for  : 
+      - intital architectureral discussion , phases to build the individual components by scratch,
+        verification of sequential logical texts embeddings for faster and innovative retrival , debugging python errors ,
+        code review and suggestions for overall stablility and clean easily-repairable code.
+      - Documentation of code in GitHub. "
+  - "Strictly these two , complete Idea and code was implemented by me with controlled guidance and advices of 
+     GEMINI & ChatGPT , no cursor or AI framework that made the code , Complete construction done by me."
+
+# ============================================================================
+# Approach summary (optional but recommended)
+# ============================================================================
+methodology_summary: |
+  "Built an end-to-end ranking pipeline that converts raw candidate JSON profiles 
+  into dense, context‑preserving documents (career history, skills, education, availability signals).
+  A bi‑encoder (BGE‑base) retrieves a broad pool of candidates via FAISS, followed by a cross‑encoder 
+  (BGE‑reranker) that jointly scores each query–candidate pair for precise ranking. Before retrieval,
+  a constraint layer applies hard filters (e.g., consulting‑only, pure research, stale architects) and 
+  computes a soft score (experience, skills, location, activity) that is blended with the similarity score.
+  All models are cached locally for offline use; the FAISS index can be pre‑built and downloaded to avoid 
+  rebuild time. The final output is a CSV with rank, score, and a reasoning snippet (years of experience, 
+  number of skills, profile preview). The system runs entirely on CPU for inference, with GPU optionally 
+  used only for index building (Pre-ranking phase).
+  The goal was to build something STABLE , FAST , SIMPLE YET POWERFUL and PRODUCTION-GRADE Architecture."
+
+# ============================================================================
+# Declarations
+# ============================================================================
+declarations:
+  read_submission_spec: true        # I have read submission_spec.md in full
+  code_is_original_work: true       # My code is my team's original work (using AI as a tool is fine)
+  no_collusion: true                # I have not coordinated my submission with other teams
+  honeypot_check_done: false        # OPTIONAL — set true if you explicitly checked for honeypots in your ranking
+  reproduction_tested: true         # Undergone many tests and performance is solid.
+
+# Hopefully wish my work would be of some Potential.
+# -Greetings :)
