@@ -4,8 +4,8 @@ import math
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from sentence_transformers import CrossEncoder
-from search import search_candidates_faiss
-from Proto_framework_1.JD_sorting import M_query
+from Prototying.Proto_framework_2.search import search_candidates_faiss
+from Prototying.Proto_framework_1.JD_sorting import M_query
 
 def cross_encoder_rerank_and_export(query_text: str, stage_1_results: list, top_k: int = 100):
     """

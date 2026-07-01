@@ -1,7 +1,7 @@
 import os
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from Proto_framework_1.JD_sorting import M_query
+from Prototying.Proto_framework_1.JD_sorting import M_query
 
 def search_candidates_faiss(query_text: str, top_k: int = 20) -> list:
     """
