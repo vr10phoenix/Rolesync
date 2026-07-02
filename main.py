@@ -14,6 +14,23 @@ from Index_builder import build_index
 from retriever import CandidateRetriever, JD_QUERY
 from cross_encoder import cross_encoder_rerank_and_export
 
+def print_logo():
+    logo = r"""
+ ____   _____  _      _____   ____  __     __ ___   _  ______
+|  _ \ |  _  || |    |  ___| / __ \ \ \   / /|   \ | |/  ____|
+| |_| || | | || |    | |___ | /  \_| \ \_/ / | |\ \| || /
+|    / | | | || |    |  ___| \_\____  \   /  | | | | || |
+| |\ \ | |_| || |___ | |___ __    \ \  | |   | | | | || \____
+|_| \_\|_____||_____||_____|\ \___/ /  |_|   |_| |___|\______|
+                             \_____/
+                  CANDIDATE RANKING PIPELINE
+     """
+    print(logo, flush=True)
+    print("=" * 60, flush=True)
+    print("RoleSync - Candidate Ranking Pipeline", flush=True)
+    print("=" * 60, flush=True)
+    print("", flush=True)
+
 
 def ensure_models_downloaded(bi_model_name: str, cross_model_name: str) -> None:
     from sentence_transformers import SentenceTransformer, CrossEncoder
@@ -83,6 +100,7 @@ def download_and_extract_index(url: str, out_dir: str = "index_database") -> boo
 
 
 def main():
+    print_logo()
     print("[MAIN] Starting pipeline...", flush=True)
 
     parser = argparse.ArgumentParser(
