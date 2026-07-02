@@ -283,6 +283,8 @@ Command‑line Arguments
 | --rebuild     | flag | False   | Force rebuild of the index, even if it already exists.        |
 
 ## Running the Pipeline
+Make sure you are in the Root Directory  
+
 Install the dependencies : 
 ```
 # install dependencies
@@ -291,7 +293,7 @@ pip install -r requirements.txt
 
 Download the dataset:
 ```
-python download_candidates.py
+<span style="color:green">python</span>  download_candidates.py
 ```
 
 Once the dataset is downloaded -> 2 ways : 
@@ -299,7 +301,7 @@ FIRST >
 ```
 # Downloads Pre-computed Candidate database , ready to use index to test it without
 # making one which takes long to construct -> (RECOMMENDED APPROACH)
-python -u main.py --candidates ./candidates.jsonl --out submission.csv --download-index "https://drive.google.com/uc?export=download&id=1zpIrxjRwCNYw0Eo4CpCUcmqTWFXylzYU"
+<span style="color:green">python</span> -u main.py --candidates ./candidates.jsonl --out submission.csv --download-index "https://drive.google.com/uc?export=download&id=1zpIrxjRwCNYw0Eo4CpCUcmqTWFXylzYU"
 ```
 Use this command to run the Ranking system with a ready to use index , test it staright away
 
