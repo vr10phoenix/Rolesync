@@ -1,3 +1,14 @@
+```
+ ____   _____  _      _____   ____  __     __ ___   _  ______
+|  _ \ |  _  || |    |  ___| / __ \ \ \   / /|   \ | |/  ____|
+| |_| || | | || |    | |___ | /  \_| \ \_/ / | |\ \| || /
+|    / | | | || |    |  ___| \_\____  \   /  | | | | || |
+| |\ \ | |_| || |___ | |___ __    \ \  | |   | | | | || \____
+|_| \_\|_____||_____||_____|\ \___/ /  |_|   |_| |___|\______|
+                             \_____/
+                  CANDIDATE RANKING PIPELINE
+```
+
 # RoleSync : An Intelligent Multi-Stage Candidate Retrieval & Ranking Engine
 
 >
@@ -236,6 +247,7 @@ project/
 ├── retriever.py
 ├── cross_encoder_reranking.py
 ├── main.py
+├── requirements.txt
 |
 ├── models/
 │    ├── BAAI/bge-reranker-base
@@ -293,7 +305,7 @@ pip install -r requirements.txt
 
 Download the dataset:
 ```
-<span style="color:green">python</span>  download_candidates.py
+python download_candidates.py
 ```
 
 Once the dataset is downloaded -> 2 ways : 
@@ -301,7 +313,7 @@ FIRST >
 ```
 # Downloads Pre-computed Candidate database , ready to use index to test it without
 # making one which takes long to construct -> (RECOMMENDED APPROACH)
-<span style="color:green">python</span> -u main.py --candidates ./candidates.jsonl --out submission.csv --download-index "https://drive.google.com/uc?export=download&id=1zpIrxjRwCNYw0Eo4CpCUcmqTWFXylzYU"
+python -u main.py --candidates ./candidates.jsonl --out submission.csv --download-index "https://drive.google.com/uc?export=download&id=1zpIrxjRwCNYw0Eo4CpCUcmqTWFXylzYU"
 ```
 Use this command to run the Ranking system with a ready to use index , test it staright away
 
