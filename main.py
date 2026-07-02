@@ -4,6 +4,7 @@ import argparse
 import zipfile
 import shutil     
 import gdown
+import time
 
 # symlink warnings disabled and directries
 os.environ["TRANSFORMERS_CACHE"] = "models"
@@ -154,7 +155,7 @@ def main():
 
     print(f"[MAIN] Loading retriever from {args.index_dir} ...", flush=True)
     retriever = CandidateRetriever(args.index_dir, model_name=args.model)
-
+    start = time.time()
     print(f"[MAIN] Retrieving top {args.recall_k} bi‑encoder candidates ...", flush=True)
     bi_candidates = retriever.search(
         query=args.query,
@@ -163,6 +164,9 @@ def main():
         alpha=args.alpha,
         exclude_disqualified=True,
     )
+    end = time.time()
+    print(f"Search and Retrival Done in {end - start} seconds.\n")
+    print(f"Candidates retrived : {args.recall_k}")
 
     if not bi_candidates:
         print("[MAIN] No candidates passed the hard filters. Exiting.", flush=True)
